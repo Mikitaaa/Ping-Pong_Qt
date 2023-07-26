@@ -19,15 +19,22 @@ void Player::setSize(int width, int height)
 
 void Player::keyPressEvent(QKeyEvent *event)
 {
+    qreal newX = x();
+
     switch (event->key()) {
     case Qt::Key_Left:
-        moveBy(-moveSpeed, 0);
+        newX -= moveSpeed;
         break;
     case Qt::Key_Right:
-        moveBy(moveSpeed, 0);
+        newX += moveSpeed;
         break;
     default:
         break;
+    }
+
+    QRectF sceneRect = scene()->sceneRect();
+    if (newX >= sceneRect.left() && newX + width <= sceneRect.right()) {
+        setX(newX);
     }
 }
 

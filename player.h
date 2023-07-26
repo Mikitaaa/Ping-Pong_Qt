@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include<QGraphicsRectItem>
+#include <QGraphicsScene>
 #include <QKeyEvent>
 
 class Player : public QGraphicsRectItem
