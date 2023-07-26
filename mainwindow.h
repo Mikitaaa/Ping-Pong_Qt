@@ -22,6 +22,8 @@ public:
 private slots:
     void on_NewGameButton_clicked();
 
+    void on_movementModeCheckBox_stateChanged(int state);
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;

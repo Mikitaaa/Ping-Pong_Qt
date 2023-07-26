@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(player);
 
     ui->gameField->setScene(scene);
+
+    connect(ui->movementModeCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_movementModeCheckBox_stateChanged);
 }
 
 MainWindow::~MainWindow()
@@ -57,4 +59,9 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
     QMainWindow::mousePressEvent(event);
 
+}
+
+void MainWindow::on_movementModeCheckBox_stateChanged(int state)
+{
+    player->setWrapAroundMovement(state == Qt::Checked);
 }

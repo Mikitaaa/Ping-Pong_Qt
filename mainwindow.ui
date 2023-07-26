@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>821</width>
+      <width>701</width>
       <height>551</height>
      </rect>
     </property>
@@ -35,6 +35,19 @@
     </property>
     <property name="text">
      <string>New Game</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="movementModeCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>725</x>
+      <y>100</y>
+      <width>101</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>looped move</string>
     </property>
    </widget>
   </widget>
