@@ -23,7 +23,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
-    QGraphicsRectItem* field;
 
     Player* player;
 
