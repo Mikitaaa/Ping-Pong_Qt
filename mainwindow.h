@@ -17,9 +17,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_NewGameButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     QGraphicsRectItem* field;
+
+    void InitFieldOnScene(int fieldWidth, int fieldHeight);
 };
 #endif // MAINWINDOW_H
