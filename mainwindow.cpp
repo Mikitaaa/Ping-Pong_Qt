@@ -5,10 +5,8 @@
 #include <QGraphicsRectItem>
 #include <QPen>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+
     ui->setupUi(this);
 
     scene = new QGraphicsScene(this);
@@ -34,18 +32,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->movementModeCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_movementModeCheckBox_stateChanged);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
+MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::on_NewGameButton_clicked()
 {
 
 }
 
-void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight)
-{
+void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
     scene->setSceneRect(10, 10, fieldWidth, fieldHeight);
 
     ui->gameField->setBackgroundBrush(QColor(90, 96, 102));
@@ -57,15 +51,14 @@ void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight)
     ui->gameField->setFixedSize(fieldWidth, fieldHeight);
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event)
-{
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+
     if (player) { player->setFocus(); }
 
     QMainWindow::mousePressEvent(event);
 
 }
 
-void MainWindow::on_movementModeCheckBox_stateChanged(int state)
-{
+void MainWindow::on_movementModeCheckBox_stateChanged(int state) {
     player->setWrapAroundMovement(state == Qt::Checked);
 }
