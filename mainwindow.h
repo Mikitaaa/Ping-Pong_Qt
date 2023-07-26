@@ -17,6 +17,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void mousePressEvent(QMouseEvent *event) override;
+
 private slots:
     void on_NewGameButton_clicked();
 

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsRectItem>
 #include <QPen>
 
@@ -24,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     scene->addItem(player);
 
-ui->gameField->setScene(scene);
+    ui->gameField->setScene(scene);
 }
 
 MainWindow::~MainWindow()
@@ -50,4 +51,10 @@ void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight)
     ui->gameField->setFixedSize(fieldWidth, fieldHeight);
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if (player) { player->setFocus(); }
 
+    QMainWindow::mousePressEvent(event);
+
+}

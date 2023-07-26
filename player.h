@@ -14,7 +14,6 @@ public:
     int getWidth() const;
 
     void keyPressEvent(QKeyEvent *event) override;
-
 protected:
     int height;
     int width;
