@@ -1,4 +1,7 @@
 #include "player.h"
+#include "ball.h"
+
+#include <QGraphicsScene>
 #include <QBrush>
 
 Player::Player()
@@ -8,6 +11,7 @@ Player::Player()
     setBrush((QBrush)Qt::black);
 
     wrapAroundMovement = false;
+    ball = nullptr;
 }
 
 void Player::setSize(int width, int height)
@@ -26,6 +30,12 @@ void Player::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Right:
         movePlayer(moveSpeed);
         break;
+    case Qt::Key_Space:
+        if (ball && ball->scene() == scene()) {
+            ball->timer->start(100);
+            ball->setParentItem(nullptr);
+            ball = nullptr;
+        }
     default:
         break;
     }
@@ -51,6 +61,12 @@ void Player::movePlayer(qreal direction)
     }
 
     setX(newX);
+
+    if (ball && ball->scene() == scene()) {
+            qreal newBallX = x() + (width - ball->getDiameter()) / 2;
+            qreal newBallY = y() - ball->getDiameter() - 5;
+            ball->setPos(newBallX, newBallY);
+        }
 }
 
 void Player::setWrapAroundMovement(bool wrapAround) {  this->wrapAroundMovement = wrapAround; }
@@ -58,3 +74,5 @@ void Player::setWrapAroundMovement(bool wrapAround) {  this->wrapAroundMovement 
 int Player::getHeight() const { return height; }
 
 int Player::getWidth() const { return width; }
+
+void Player::setBall(Ball* ball) { this->ball = ball; }

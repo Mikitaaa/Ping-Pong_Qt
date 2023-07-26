@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ball = new Ball();
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
+    player->setBall(ball);
 
     scene->addItem(ball);
     scene->addItem(player);

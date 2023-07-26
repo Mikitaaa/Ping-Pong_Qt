@@ -2,12 +2,15 @@
 #define BALL_H
 
 #include <QGraphicsEllipseItem>
-#include <QGraphicsScene>
+#include <QObject>
+#include <QTimer>
 
-class Ball : public QGraphicsEllipseItem
+class Ball : public QObject, public QGraphicsEllipseItem
 {
+    Q_OBJECT
 public:
     Ball();
+    ~Ball() override;
 
     void setDiameter(qreal diameter);
     qreal getDiameter() const;
@@ -17,6 +20,10 @@ public:
 
     void setAngle(qreal angle);
     qreal getAngle() const;
+
+    void move();
+
+    QTimer* timer;
 
 private:
     qreal diameter;

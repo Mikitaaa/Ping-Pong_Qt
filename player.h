@@ -2,8 +2,9 @@
 #define PLAYER_H
 
 #include<QGraphicsRectItem>
-#include <QGraphicsScene>
 #include <QKeyEvent>
+
+class Ball;
 
 class Player : public QGraphicsRectItem
 {
@@ -16,10 +17,14 @@ public:
 
     void setWrapAroundMovement(bool wrapAround);
 
+    void setBall(Ball* ball);
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 protected:
+    Ball* ball;
+
     int height;
     int width;
     int moveSpeed;
