@@ -21,20 +21,14 @@ void Player::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Left:
-        move(-1);
+        moveBy(-moveSpeed, 0);
         break;
     case Qt::Key_Right:
-        move(1);
+        moveBy(moveSpeed, 0);
         break;
     default:
         break;
     }
-}
-
-void Player::move(int direction)
-{
-   QPointF currentPos = pos();
-   setPos(currentPos.x() + moveSpeed * direction, currentPos.y());
 }
 
 int Player::getHeight() const

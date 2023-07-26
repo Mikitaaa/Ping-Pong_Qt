@@ -15,8 +15,6 @@ public:
 
     void keyPressEvent(QKeyEvent *event) override;
 
-    void move(int direction);
-
 protected:
     int height;
     int width;
