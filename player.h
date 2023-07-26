@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include<QGraphicsRectItem>
+#include <QKeyEvent>
 
 class Player : public QGraphicsRectItem
 {
@@ -11,6 +12,10 @@ public:
     void setSize(int width, int height);
     int getHeight() const;
     int getWidth() const;
+
+    void keyPressEvent(QKeyEvent *event) override;
+
+    void move(int direction);
 
 protected:
     int height;

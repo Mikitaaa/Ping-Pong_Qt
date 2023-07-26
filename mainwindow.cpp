@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "player.h"
+
 
 #include <QGraphicsRectItem>
 #include <QPen>
@@ -18,10 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
     int fieldHeight = 500;
     InitFieldOnScene(fieldWidth, fieldHeight);
 
-    Player* player = new Player();
-    scene->addItem(player);
-    player->setPos((fieldWidth - player->getWidth()) / 2, fieldHeight - player->getHeight() - 10);
+    player = new Player();
 
+    player->setPos((fieldWidth - player->getWidth()) / 2, fieldHeight - player->getHeight() - 10);
+    player->setFlag(QGraphicsItem::ItemIsFocusable);
+    player->setFocus();
+
+    scene->addItem(field);
+    scene->addItem(player);
 }
 
 MainWindow::~MainWindow()
@@ -45,7 +49,6 @@ void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight)
 
     QPen whitePen(Qt::black);
     field->setPen(whitePen);
-    scene->addItem(field);
 
     ui->gameField->setBackgroundBrush(QColor(90, 96, 102));
     ui->gameField->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
-
+#include "player.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +24,8 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     QGraphicsRectItem* field;
+
+    Player* player;
 
     void InitFieldOnScene(int fieldWidth, int fieldHeight);
 };
