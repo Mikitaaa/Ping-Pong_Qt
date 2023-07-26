@@ -18,11 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
     InitFieldOnScene(fieldWidth, fieldHeight);
 
     player = new Player();
-
     player->setPos((fieldWidth - player->getWidth()) / 2, fieldHeight - player->getHeight() - 10);
     player->setFlag(QGraphicsItem::ItemIsFocusable);
     player->setFocus();
 
+    ball = new Ball();
+    ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
+
+    scene->addItem(ball);
     scene->addItem(player);
 
     ui->gameField->setScene(scene);

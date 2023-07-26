@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include "player.h"
+#include "ball.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,6 +30,7 @@ private:
     QGraphicsScene* scene;
 
     Player* player;
+    Ball* ball;
 
     void InitFieldOnScene(int fieldWidth, int fieldHeight);
 };
