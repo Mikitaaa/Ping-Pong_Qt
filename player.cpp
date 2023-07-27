@@ -27,7 +27,7 @@ void Player::keyPressEvent(QKeyEvent *event) {
 
     case Qt::Key_Space:
         if (ball && ball->scene() == scene()) {
-            ball->timer->start(100);
+            ball->timer->start(5);
             ball->setParentItem(nullptr);
             ball = nullptr;
         }
