@@ -25,6 +25,8 @@ private slots:
 
     void on_movementModeCheckBox_stateChanged(int state);
 
+    void GameLoss();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;

@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ball = new Ball();
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
+    connect(ball, &Ball::gameLost, this, &MainWindow::GameLoss);
     player->setBall(ball);
 
     scene->addItem(ball);
@@ -61,4 +62,14 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 
 void MainWindow::on_movementModeCheckBox_stateChanged(int state) {
     player->setWrapAroundMovement(state == Qt::Checked);
+}
+
+void MainWindow::GameLoss() {
+    ball->timer->stop();
+
+    player->setPos((ui->gameField->width() - player->getWidth()) / 2, ui->gameField->height() - player->getHeight() - 10);
+
+    ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
+
+    player->setBall(ball);
 }

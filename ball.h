@@ -29,6 +29,9 @@ private:
     qreal diameter;
     qreal moveSpeed;
     qreal angle;
+
+signals:
+    void gameLost();
 };
 
 #endif // BALL_H

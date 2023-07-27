@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QBrush>
 
-Player::Player() : width(100), height(20), moveSpeed(50) {
+Player::Player() : width(100), height(10), moveSpeed(50) {
 
     setRect(0, 0, width, height);
     setBrush((QBrush)Qt::black);
