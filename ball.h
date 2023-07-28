@@ -25,8 +25,6 @@ public:
 
     QTimer* timer;
 
-    void printInfo();
-
 private:
     qreal diameter;
     qreal moveSpeed;

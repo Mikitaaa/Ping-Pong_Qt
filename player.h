@@ -21,8 +21,6 @@ public:
 
     void setBall(Ball* ball);
 
-    void printInfo();
-
     bool isPlayerHoldingBall;
 
 protected:

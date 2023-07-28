@@ -4,9 +4,7 @@
 #include <QBrush>
 #include <QtMath>
 
-#include <QDebug>
-
-Player::Player() : width(100), height(70), moveSpeed(50) {
+Player::Player() : width(100), height(10), moveSpeed(50) {
 
     setRect(0, 0, width, height);
     setBrush((QBrush)Qt::black);
@@ -30,7 +28,7 @@ void Player::keyPressEvent(QKeyEvent *event) {
 
     case Qt::Key_Space:
         if (ball && ball->scene() == scene()) {
-            ball->timer->start(20);
+            ball->timer->start(10);
            isPlayerHoldingBall = false;
         }
 
@@ -59,43 +57,10 @@ void Player::movePlayer(qreal direction) {
 
     setX(newX);
 
-    handleBallCollision();
-
     if (isPlayerHoldingBall) {
         qreal newBallX = x() + (width - ball->getDiameter()) / 2;
         qreal newBallY = y() - ball->getDiameter() - 5;
         ball->setPos(newBallX, newBallY);
-    }
-}
-
-void Player::handleBallCollision() {
-    if (ball && ball->collidesWithItem(this)) {
-        qreal playerTopY = y();
-        qreal ballBottomY = ball->y() - ball->getDiameter();
-
-        if (ballBottomY < playerTopY) {
-            qreal playerCenterX = x() + width / 2;
-            qreal ballCenterX = ball->x() + ball->getDiameter() / 2;
-
-            if (playerCenterX >= ballCenterX) {
-                ball->setPos(x() - ball->getDiameter() - 1, ball->y());
-            } else {
-                ball->setPos(x() + width + ball->getDiameter() + 1, ball->y());
-            }
-        } else {
-            // Изменяем угол полета мяча при столкновении с игроком
-            qreal playerCenterX = x() + width / 2;
-            qreal ballCenterX = ball->x() + ball->getDiameter() / 2;
-
-            // Запоминаем текущий угол мяча
-            qreal oldAngle = ball->getAngle();
-
-            // Вычисляем новый угол отражения мяча
-            qreal newAngle = 2 * qAtan2(ball->getAngle(), playerCenterX - ballCenterX);
-
-            // Устанавливаем новый угол полета мяча
-            ball->setAngle(qRadiansToDegrees(newAngle));
-        }
     }
 }
 

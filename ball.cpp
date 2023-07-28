@@ -5,9 +5,7 @@
 #include <QtMath>
 #include <QList>
 
-#include <QDebug>
-
-Ball::Ball() : diameter(20), moveSpeed(7), angle(30) {
+Ball::Ball() : diameter(20), moveSpeed(4), angle(30) {
 
     setRect(0, 0, diameter, diameter);
     setBrush(Qt::red);
@@ -16,38 +14,45 @@ Ball::Ball() : diameter(20), moveSpeed(7), angle(30) {
     connect(timer, &QTimer::timeout, this, &Ball::move);
 }
 
-void Ball::printInfo() {
-    qDebug() << "Ball: x =" << x() << ", y =" << y() << ", diameter =" << diameter;
-}
-
 void Ball::move() {
     qreal dx = moveSpeed * qCos(qDegreesToRadians(angle));
     qreal dy = -moveSpeed * qSin(qDegreesToRadians(angle));
 
-    setPos(x() + dx, y() + dy);
+    qreal newX = x() + dx;
+    qreal newY = y() + dy;
+
+    QRectF sceneRect = scene()->sceneRect();
+    if (newY >= sceneRect.bottom() - diameter) {
+        emit gameLost();
+        return;
+    }
+
+    setPos(newX, newY);
 
     QList<QGraphicsItem*> collidingItemsList = collidingItems();
+    for (QGraphicsItem* item : collidingItemsList) {
+        if (item == this) continue;
 
-    for (QGraphicsItem* item : collidingItemsList)
-        {
-            if (item == this) continue;
+        QPointF surfaceNormal = mapToItem(this, 0, -1) - item->mapToItem(item, 0, 0);
+        surfaceNormal /= qSqrt(surfaceNormal.x() * surfaceNormal.x() + surfaceNormal.y() * surfaceNormal.y());
 
-            QPointF SurfaseNormal = mapToItem(this, 0, -1) - item->mapToItem(item, 0, 0);
+        qreal dotProduct = dx * surfaceNormal.x() + dy * surfaceNormal.y();
+        dx = dx - 2 * dotProduct * surfaceNormal.x();
+        dy = dy - 2 * dotProduct * surfaceNormal.y();
 
-            qreal newAngle = qAtan2(-dy, dx) - qAtan2(-SurfaseNormal.y(), SurfaseNormal.x());
+        angle = qRadiansToDegrees(qAtan2(-dy, dx));
+    }
 
-            angle = qRadiansToDegrees(newAngle) + 180;
-        }
+    // Handle collisions with scene borders
+    if (newX <= sceneRect.left() || newX >= sceneRect.right() - diameter) {
+        dx = -dx;
+        angle = qRadiansToDegrees(qAtan2(-dy, dx));
+    } else if(newY <= sceneRect.top()) {
+        dy = -dy;
+        angle = qRadiansToDegrees(qAtan2(-dy, dx));
+    }
 
-    // Borders collisions
-    QRectF sceneRect = scene()->sceneRect();
-
-    if (y() <= sceneRect.top()) { angle = -angle; }
-
-    if (y() >= sceneRect.bottom() - diameter) { emit gameLost(); }
-
-    if (x() <= sceneRect.left() || x() >= sceneRect.right() - diameter) {  angle = 180 - angle; }
-
+    setPos(x() + dx, y() + dy);
 }
 
 Ball::~Ball() {
