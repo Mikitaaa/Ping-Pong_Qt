@@ -72,5 +72,6 @@ void MainWindow::GameLoss() {
 
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
     player->isPlayerHoldingBall = true;
-    ball->setAngle(30);
+
+    ball->setStartAngle();
 }

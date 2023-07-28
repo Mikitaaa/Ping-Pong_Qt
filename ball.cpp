@@ -1,12 +1,14 @@
 #include "ball.h"
+#include "player.h"
 #include <QGraphicsScene>
 
 #include <QBrush>
 #include <QtMath>
 #include <QList>
 
-Ball::Ball() : diameter(20), moveSpeed(4), angle(30) {
+Ball::Ball() : diameter(20), moveSpeed(3), angle(135) {
 
+    angle -= QRandomGenerator::global()->generateDouble() * 90;
     setRect(0, 0, diameter, diameter);
     setBrush(Qt::red);
 
@@ -30,18 +32,46 @@ void Ball::move() {
     setPos(newX, newY);
 
     QList<QGraphicsItem*> collidingItemsList = collidingItems();
-    for (QGraphicsItem* item : collidingItemsList) {
-        if (item == this) continue;
+        for (QGraphicsItem* item : collidingItemsList) {
+            if (item == this) continue;
+            if (Player* player = dynamic_cast<Player*>(item)) {
+                if (this->collidesWithItem(player)) {
 
-        QPointF surfaceNormal = mapToItem(this, 0, -1) - item->mapToItem(item, 0, 0);
-        surfaceNormal /= qSqrt(surfaceNormal.x() * surfaceNormal.x() + surfaceNormal.y() * surfaceNormal.y());
+                    QPointF collisionPoint = mapToItem(player, 0, 0);
+                    qreal collisionVectorX = collisionPoint.x() - diameter / 2;
+                    qreal collisionVectorY = collisionPoint.y() - diameter / 2;
+                    qreal collisionAngle = qRadiansToDegrees(qAtan2(collisionVectorY, collisionVectorX));
 
-        qreal dotProduct = dx * surfaceNormal.x() + dy * surfaceNormal.y();
-        dx = dx - 2 * dotProduct * surfaceNormal.x();
-        dy = dy - 2 * dotProduct * surfaceNormal.y();
+                    qreal lowestBallY = y() + diameter/2;
+                    qreal highestPlayerY = player->y();
 
-        angle = qRadiansToDegrees(qAtan2(-dy, dx));
-    }
+                    if (lowestBallY > highestPlayerY) {
+                        qreal ballCenterX = x() + diameter / 2;
+                        qreal playerCenterX = player->x() + player->getWidth() / 2;
+                        if (ballCenterX > playerCenterX) {
+                            setX(player->x() + player->getWidth() + 2);
+                            angle = 315;
+                            break;
+                        }else {
+                            setX(player->x() - diameter - 2);
+                            angle = 225;
+                            break;
+                        }
+                    }
+
+                    qreal reflectionAngleRange = 150.0;
+                    qreal maxDeviation = 30.0;
+                    qreal reflectAngle = reflectionAngleRange * (collisionAngle / 90.0);
+
+                    qreal randomDeviation = QRandomGenerator::global()->generateDouble() * maxDeviation - maxDeviation / 2;
+                    reflectAngle += randomDeviation;
+
+                    qreal newAngle = qDegreesToRadians(180 + reflectAngle);
+
+                    angle = qRadiansToDegrees(newAngle);
+                }
+            }
+        }
 
     // Handle collisions with scene borders
     if (newX <= sceneRect.left() || newX >= sceneRect.right() - diameter) {
@@ -71,6 +101,6 @@ void Ball::setMoveSpeed(qreal moveSpeed) {  this->moveSpeed = moveSpeed; }
 
 qreal Ball::getMoveSpeed() const { return moveSpeed; }
 
-void Ball::setAngle(qreal angle) { this->angle = angle; }
+void Ball::setStartAngle() { this->angle = 135 - QRandomGenerator::global()->generateDouble() * 90; }
 
 qreal Ball::getAngle() const { return angle; }

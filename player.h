@@ -34,7 +34,6 @@ protected:
     bool wrapAroundMovement;
 
     void movePlayer(qreal direction);
-    void handleBallCollision();
 };
 
 #endif // PLAYER_H

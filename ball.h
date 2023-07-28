@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QTimer>
 
+#include <QRandomGenerator>
+
 class Ball : public QObject, public QGraphicsEllipseItem
 {
     Q_OBJECT
@@ -18,7 +20,7 @@ public:
     void setMoveSpeed(qreal moveSpeed);
     qreal getMoveSpeed() const;
 
-    void setAngle(qreal angle);
+    void setStartAngle();
     qreal getAngle() const;
 
     void move();
