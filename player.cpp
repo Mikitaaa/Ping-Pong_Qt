@@ -16,10 +16,6 @@ Player::Player() : width(100), height(70), moveSpeed(50) {
     isPlayerHoldingBall = false;
 }
 
-void Player::printInfo() {
-    qDebug() << "Player: x =" << x() << ", y =" << y() << ", width =" << width << ", height =" << height;
-}
-
 void Player::keyPressEvent(QKeyEvent *event) {
 
     switch (event->key()) {
@@ -73,7 +69,6 @@ void Player::movePlayer(qreal direction) {
 }
 
 void Player::handleBallCollision() {
-
     if (ball && ball->collidesWithItem(this)) {
         qreal playerTopY = y();
         qreal ballBottomY = ball->y() - ball->getDiameter();
@@ -92,8 +87,13 @@ void Player::handleBallCollision() {
             qreal playerCenterX = x() + width / 2;
             qreal ballCenterX = ball->x() + ball->getDiameter() / 2;
 
+            // Запоминаем текущий угол мяча
+            qreal oldAngle = ball->getAngle();
+
             // Вычисляем новый угол отражения мяча
             qreal newAngle = 2 * qAtan2(ball->getAngle(), playerCenterX - ballCenterX);
+
+            // Устанавливаем новый угол полета мяча
             ball->setAngle(qRadiansToDegrees(newAngle));
         }
     }
