@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
     connect(ball, &Ball::gameLost, this, &MainWindow::GameLoss);
     player->setBall(ball);
+    player->isPlayerHoldingBall = true;
 
     scene->addItem(ball);
     scene->addItem(player);
@@ -70,6 +71,4 @@ void MainWindow::GameLoss() {
     player->setPos((ui->gameField->width() - player->getWidth()) / 2, ui->gameField->height() - player->getHeight() - 10);
 
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
-
-    player->setBall(ball);
 }

@@ -5,14 +5,19 @@
 #include <QtMath>
 #include <QList>
 
+#include <QDebug>
 
-Ball::Ball() : diameter(20), moveSpeed(3), angle(30) {
+Ball::Ball() : diameter(20), moveSpeed(7), angle(30) {
 
     setRect(0, 0, diameter, diameter);
     setBrush(Qt::red);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Ball::move);
+}
+
+void Ball::printInfo() {
+    qDebug() << "Ball: x =" << x() << ", y =" << y() << ", diameter =" << diameter;
 }
 
 void Ball::move() {

@@ -3,11 +3,13 @@
 
 #include<QGraphicsRectItem>
 #include <QKeyEvent>
+#include <QObject>
 
-class Ball;
+#include "ball.h"
 
-class Player : public QGraphicsRectItem
+class Player : public QObject, public QGraphicsRectItem
 {
+    Q_OBJECT
 public:
     Player();
 
@@ -19,10 +21,13 @@ public:
 
     void setBall(Ball* ball);
 
+    void printInfo();
+
+    bool isPlayerHoldingBall;
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 
-protected:
     Ball* ball;
 
     int height;
@@ -31,6 +36,7 @@ protected:
     bool wrapAroundMovement;
 
     void movePlayer(qreal direction);
+    void handleBallCollision();
 };
 
 #endif // PLAYER_H
