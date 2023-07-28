@@ -30,10 +30,12 @@ void Ball::move() {
     }
 
     setPos(newX, newY);
-
+// handling collisions
     QList<QGraphicsItem*> collidingItemsList = collidingItems();
         for (QGraphicsItem* item : collidingItemsList) {
+
             if (item == this) continue;
+
             if (Player* player = dynamic_cast<Player*>(item)) {
                 if (this->collidesWithItem(player)) {
 
@@ -42,6 +44,9 @@ void Ball::move() {
                     qreal collisionVectorY = collisionPoint.y() - diameter / 2;
                     qreal collisionAngle = qRadiansToDegrees(qAtan2(collisionVectorY, collisionVectorX));
 
+                    // handle right and left collisions with plyer:
+                    // with an instant movement of the player
+                    // ball may be insidee the player if the ball was lower on scene
                     qreal lowestBallY = y() + diameter/2;
                     qreal highestPlayerY = player->y();
 
