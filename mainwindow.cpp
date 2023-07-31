@@ -36,11 +36,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::on_NewGameButton_clicked()
-{
-
-}
-
 void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
     scene->setSceneRect(10, 10, fieldWidth, fieldHeight);
 
@@ -66,6 +61,10 @@ void MainWindow::on_movementModeCheckBox_stateChanged(int state) {
 }
 
 void MainWindow::GameLoss() {
+    on_NewGameButton_clicked();
+}
+
+void MainWindow::on_NewGameButton_clicked() {
     ball->timer->stop();
 
     player->setPos((ui->gameField->width() - player->getWidth()) / 2, ui->gameField->height() - player->getHeight() - 10);
@@ -75,3 +74,4 @@ void MainWindow::GameLoss() {
 
     ball->setStartAngle();
 }
+
