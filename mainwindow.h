@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include <QKeyEvent>
+#include <QTimer>
+
 #include "player.h"
 #include "ball.h"
 
@@ -20,12 +23,15 @@ public:
 
     void mousePressEvent(QMouseEvent *event) override;
 
+    void keyPressEvent(QKeyEvent *event) override;
 private slots:
     void on_NewGameButton_clicked();
 
     void on_movementModeCheckBox_stateChanged(int state);
 
     void GameLoss();
+
+    void updateTimerLabel();
 
 private:
     Ui::MainWindow *ui;
@@ -35,5 +41,8 @@ private:
     Ball* ball;
 
     void InitFieldOnScene(int fieldWidth, int fieldHeight);
+
+    QTimer lossGameTimer;
+    int countdownSeconds;
 };
 #endif // MAINWINDOW_H

@@ -2,7 +2,6 @@
 #define PLAYER_H
 
 #include<QGraphicsRectItem>
-#include <QKeyEvent>
 #include <QObject>
 
 #include "ball.h"
@@ -16,24 +15,23 @@ public:
     void setSize(int width, int height);
     int getHeight() const;
     int getWidth() const;
+    int getmoveSpeed() const;
 
     void setWrapAroundMovement(bool wrapAround);
 
     void setBall(Ball* ball);
 
+    void movePlayer(qreal direction);
+
     bool isPlayerHoldingBall;
 
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
-
     Ball* ball;
 
     int height;
     int width;
     int moveSpeed;
     bool wrapAroundMovement;
-
-    void movePlayer(qreal direction);
 };
 
 #endif // PLAYER_H

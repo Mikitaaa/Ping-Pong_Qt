@@ -14,29 +14,6 @@ Player::Player() : width(150), height(10), moveSpeed(50) {
     isPlayerHoldingBall = false;
 }
 
-void Player::keyPressEvent(QKeyEvent *event) {
-
-    switch (event->key()) {
-
-    case Qt::Key_Left:
-        movePlayer(-moveSpeed);
-        break;
-
-    case Qt::Key_Right:
-        movePlayer(moveSpeed);
-        break;
-
-    case Qt::Key_Space:
-        if (ball && ball->scene() == scene()) {
-            ball->timer->start(10);
-           isPlayerHoldingBall = false;
-        }
-
-    default:
-        break;
-    }
-}
-
 void Player::movePlayer(qreal direction) {
     qreal newX = x() + direction;
 
@@ -76,5 +53,7 @@ void Player::setWrapAroundMovement(bool wrapAround) {  this->wrapAroundMovement 
 int Player::getHeight() const { return height; }
 
 int Player::getWidth() const { return width; }
+
+int Player::getmoveSpeed() const { return moveSpeed; }
 
 void Player::setBall(Ball* ball) { this->ball = ball; }

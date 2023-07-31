@@ -9,6 +9,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
 
+    setFocus();
+    countdownSeconds = 10;
+    ui->timerLabel->setText(QString::number(countdownSeconds));
+
     scene = new QGraphicsScene(this);
 
     int fieldWidth = 700;
@@ -17,8 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     player = new Player();
     player->setPos((fieldWidth - player->getWidth()) / 2, fieldHeight - player->getHeight() - 10);
-    player->setFlag(QGraphicsItem::ItemIsFocusable);
-    player->setFocus();
+
 
     ball = new Ball();
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
@@ -31,10 +34,47 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->gameField->setScene(scene);
 
+     lossGameTimer.setInterval(1000);
+
     connect(ui->movementModeCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_movementModeCheckBox_stateChanged);
+    connect(&lossGameTimer, &QTimer::timeout, this, &MainWindow::updateTimerLabel);
+    lossGameTimer.start();
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    switch (event->key()) {
+        case Qt::Key_Left:
+            player->movePlayer(-player->getmoveSpeed());
+            break;
+
+        case Qt::Key_Right:
+            player->movePlayer(player->getmoveSpeed());
+            break;
+
+        case Qt::Key_Space:
+            if (ball && ball->scene() == scene) {
+                ball->timer->start(10);
+                player->isPlayerHoldingBall = false;
+            }
+            break;
+
+        default:
+            QMainWindow::keyPressEvent(event);
+    }
+}
+
+void MainWindow::updateTimerLabel() {
+    ui->timerLabel->setText(QString::number(countdownSeconds));
+    countdownSeconds--;
+
+    // TODO add timeout message
+    if (countdownSeconds < 0) {
+        lossGameTimer.stop();
+        GameLoss();
+    }
+}
 
 void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
     scene->setSceneRect(10, 10, fieldWidth, fieldHeight);
@@ -50,7 +90,7 @@ void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 
-    if (player) { player->setFocus(); }
+    setFocus();
 
     QMainWindow::mousePressEvent(event);
 
@@ -65,6 +105,10 @@ void MainWindow::GameLoss() {
 }
 
 void MainWindow::on_NewGameButton_clicked() {
+
+    countdownSeconds = 10;
+    ui->timerLabel->setText(QString::number(countdownSeconds));
+
     ball->timer->stop();
 
     player->setPos((ui->gameField->width() - player->getWidth()) / 2, ui->gameField->height() - player->getHeight() - 10);
