@@ -1,47 +1,58 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsRectItem>
 #include <QPen>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+#include <QGridLayout>
+#include <QGraphicsView>
 
-    ui->setupUi(this);
-
-    setFocus();
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    setFocusPolicy(Qt::StrongFocus);
     countdownSeconds = 10;
-    ui->timerLabel->setText(QString::number(countdownSeconds));
+
+    QWidget *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
 
     scene = new QGraphicsScene(this);
+    gameField = new QGraphicsView(scene, centralWidget);
 
     int fieldWidth = 700;
     int fieldHeight = 500;
     InitFieldOnScene(fieldWidth, fieldHeight);
 
+    timerLabel = new QLabel(QString::number(countdownSeconds), centralWidget);
+    newGameButton = new QPushButton("New Game", centralWidget);
+    movementModeCheckBox = new QCheckBox("Looped move", centralWidget);
+    setupTimerLable();
+
+    QGridLayout *mainLayout = new QGridLayout(centralWidget);
+    mainLayout->addWidget(gameField, 0, 0, 4, 1);
+    mainLayout->addWidget(newGameButton, 1, 1);
+    mainLayout->addWidget(movementModeCheckBox, 2, 1);
+    mainLayout->addWidget(timerLabel, 0, 1, 1, 1);
+
     player = new Player();
     player->setPos((fieldWidth - player->getWidth()) / 2, fieldHeight - player->getHeight() - 10);
-
 
     ball = new Ball();
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
     connect(ball, &Ball::gameLost, this, &MainWindow::GameLoss);
+
     player->setBall(ball);
     player->isPlayerHoldingBall = true;
 
     scene->addItem(ball);
     scene->addItem(player);
 
-    ui->gameField->setScene(scene);
+    connect(newGameButton, &QPushButton::clicked, this, &MainWindow::on_NewGameButton_clicked);
+    connect(movementModeCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_movementModeCheckBox_stateChanged);
+    connect(&WinGameTimer, &QTimer::timeout, this, &MainWindow::updateTimerLabel);
+    WinGameTimer.setInterval(1000);
 
-     lossGameTimer.setInterval(1000);
-
-    connect(ui->movementModeCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_movementModeCheckBox_stateChanged);
-    connect(&lossGameTimer, &QTimer::timeout, this, &MainWindow::updateTimerLabel);
-    lossGameTimer.start();
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow() { delete scene; }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
@@ -55,8 +66,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
         case Qt::Key_Space:
             if (ball && ball->scene() == scene) {
-                ball->timer->start(10);
+                if (!ball->timer->isActive()) {ball->timer->start(10); }
                 player->isPlayerHoldingBall = false;
+                if (!WinGameTimer.isActive()) {WinGameTimer.start(); }
             }
             break;
 
@@ -66,56 +78,64 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 void MainWindow::updateTimerLabel() {
-    ui->timerLabel->setText(QString::number(countdownSeconds));
     countdownSeconds--;
+    timerLabel->setText(QString::number(countdownSeconds));
 
-    // TODO add timeout message
     if (countdownSeconds < 0) {
-        lossGameTimer.stop();
-        GameLoss();
+        WinGameTimer.stop();
+        GameWin();
     }
 }
 
-void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
-    scene->setSceneRect(10, 10, fieldWidth, fieldHeight);
-
-    ui->gameField->setBackgroundBrush(QColor(90, 96, 102));
-
-    ui->gameField->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->gameField->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    ui->gameField->setGeometry(10, 10, fieldWidth, fieldHeight);
-    ui->gameField->setFixedSize(fieldWidth, fieldHeight);
-}
-
-void MainWindow::mousePressEvent(QMouseEvent *event) {
-
-    setFocus();
-
-    QMainWindow::mousePressEvent(event);
-
-}
-
-void MainWindow::on_movementModeCheckBox_stateChanged(int state) {
-    player->setWrapAroundMovement(state == Qt::Checked);
-}
-
 void MainWindow::GameLoss() {
+    // TODO game loss message
+    on_NewGameButton_clicked();
+}
+
+void MainWindow::GameWin() {
+    // TODO game win message
     on_NewGameButton_clicked();
 }
 
 void MainWindow::on_NewGameButton_clicked() {
+    if (WinGameTimer.isActive()) { WinGameTimer.stop(); }
 
     countdownSeconds = 10;
-    ui->timerLabel->setText(QString::number(countdownSeconds));
+    timerLabel->setText(QString::number(countdownSeconds));
 
     ball->timer->stop();
 
-    player->setPos((ui->gameField->width() - player->getWidth()) / 2, ui->gameField->height() - player->getHeight() - 10);
+    player->setPos((gameField->width() - player->getWidth()) / 2, gameField->height() - player->getHeight() - 10);
 
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
     player->isPlayerHoldingBall = true;
 
     ball->setStartAngle();
+}
+
+void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
+    scene->setSceneRect(10, 10, fieldWidth, fieldHeight);
+
+    scene->setBackgroundBrush(QColor(90, 96, 102));
+
+    gameField->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    gameField->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    gameField->setGeometry(10, 10, fieldWidth, fieldHeight);
+    gameField->setFixedSize(fieldWidth, fieldHeight);
+    gameField->setFocusPolicy(Qt::NoFocus);
+}
+
+void MainWindow::setupTimerLable() {
+    timerLabel->setFixedSize(100, 50);
+    QFont font("Arial", 20);
+    timerLabel->setFont(font);
+    timerLabel->setStyleSheet("background-color: black;");
+
+    timerLabel->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::on_movementModeCheckBox_stateChanged(int state) {
+    player->setWrapAroundMovement(state == Qt::Checked);
 }
 
