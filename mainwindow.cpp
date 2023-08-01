@@ -1,9 +1,5 @@
 #include "mainwindow.h"
 
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsRectItem>
-#include <QPen>
-
 #include <QGridLayout>
 #include <QGraphicsView>
 
