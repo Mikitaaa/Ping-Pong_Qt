@@ -3,7 +3,7 @@
 #include <QGridLayout>
 #include <QGraphicsView>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(1) {
     setFocusPolicy(Qt::StrongFocus);
     countdownSeconds = 10;
 
@@ -90,6 +90,14 @@ void MainWindow::GameLoss() {
 
 void MainWindow::GameWin() {
     // TODO game win message
+
+    // функцию setRandomBlocks
+    // которая принимает количество блоков
+    // она выставляет это количество блоков в случайном порядке
+    // под случайным углом,блоки не могут быть расположены ниже игрока и за картой
+    // можно создать массив, хранящий все возможные варианты блоков, и ставиться будут случайные из массива,
+    // создать усложнение уровней за счет увеличения количества блоков, до определенного уровня, после которого
+    // сложность начет меняться например за счет увеличения скорости мяча, уменьшения скорости игрока
     on_NewGameButton_clicked();
 }
 
@@ -107,6 +115,15 @@ void MainWindow::on_NewGameButton_clicked() {
     player->isPlayerHoldingBall = true;
 
     ball->setStartAngle();
+
+    setRandomBlocks(level);
+}
+
+void MainWindow::setRandomBlocks(int lvl) {
+    QGraphicsRectItem *newBlock = new QGraphicsRectItem();
+    newBlock->setRect(0, 0, 100, 100);
+    newBlock->setBrush((QBrush)Qt::black);
+    scene->addItem(newBlock);
 }
 
 void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {

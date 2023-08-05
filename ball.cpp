@@ -37,44 +37,9 @@ void Ball::move() {
             if (item == this) continue;
 
             if (Player* player = dynamic_cast<Player*>(item)) {
-                if (this->collidesWithItem(player)) {
-
-                    QPointF collisionPoint = mapToItem(player, 0, 0);
-                    qreal collisionVectorX = collisionPoint.x() - diameter / 2;
-                    qreal collisionVectorY = collisionPoint.y() - diameter / 2;
-                    qreal collisionAngle = qRadiansToDegrees(qAtan2(collisionVectorY, collisionVectorX));
-
-                    // handle right and left collisions with plyer:
-                    // with an instant movement of the player
-                    // ball may be insidee the player if the ball was lower on scene
-                    qreal lowestBallY = y() + diameter/2;
-                    qreal highestPlayerY = player->y();
-
-                    if (lowestBallY > highestPlayerY) {
-                        qreal ballCenterX = x() + diameter / 2;
-                        qreal playerCenterX = player->x() + player->getWidth() / 2;
-                        if (ballCenterX > playerCenterX) {
-                            setX(player->x() + player->getWidth() + 2);
-                            angle = 315;
-                            break;
-                        }else {
-                            setX(player->x() - diameter - 2);
-                            angle = 225;
-                            break;
-                        }
-                    }
-
-                    qreal reflectionAngleRange = 150.0;
-                    qreal maxDeviation = 30.0;
-                    qreal reflectAngle = reflectionAngleRange * (collisionAngle / 90.0);
-
-                    qreal randomDeviation = QRandomGenerator::global()->generateDouble() * maxDeviation - maxDeviation / 2;
-                    reflectAngle += randomDeviation;
-
-                    qreal newAngle = qDegreesToRadians(180 + reflectAngle);
-
-                    angle = qRadiansToDegrees(newAngle);
-                }
+                handlePlayerCollision(player);
+            }else {
+                handleBlockCollision(item);
             }
         }
 
@@ -88,6 +53,50 @@ void Ball::move() {
     }
 
     setPos(x() + dx, y() + dy);
+}
+
+void Ball::handlePlayerCollision(Player *player) {
+    if (this->collidesWithItem(player)) {
+
+        QPointF collisionPoint = mapToItem(player, 0, 0);
+        qreal collisionVectorX = collisionPoint.x() - diameter / 2;
+        qreal collisionVectorY = collisionPoint.y() - diameter / 2;
+        qreal collisionAngle = qRadiansToDegrees(qAtan2(collisionVectorY, collisionVectorX));
+
+        // handle right and left collisions with plyer:
+        // with an instant movement of the player
+        // ball may be insidee the player if the ball was lower on scene
+        qreal lowestBallY = y() + diameter/2;
+        qreal highestPlayerY = player->y();
+
+        if (lowestBallY > highestPlayerY) {
+            qreal ballCenterX = x() + diameter / 2;
+            qreal playerCenterX = player->x() + player->getWidth() / 2;
+            if (ballCenterX > playerCenterX) {
+                setX(player->x() + player->getWidth() + 2);
+                angle = 315;
+            }else {
+                setX(player->x() - diameter - 2);
+                angle = 225;
+            }
+        }
+
+        qreal reflectionAngleRange = 150.0;
+        qreal maxDeviation = 30.0;
+        qreal reflectAngle = reflectionAngleRange * (collisionAngle / 90.0);
+
+        qreal randomDeviation = QRandomGenerator::global()->generateDouble() * maxDeviation - maxDeviation / 2;
+        reflectAngle += randomDeviation;
+
+        qreal newAngle = qDegreesToRadians(180 + reflectAngle);
+
+        angle = qRadiansToDegrees(newAngle);
+    }
+
+}
+
+void Ball::handleBlockCollision(QGraphicsItem *item) {
+
 }
 
 Ball::~Ball() {

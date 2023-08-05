@@ -7,6 +7,8 @@
 
 #include <QRandomGenerator>
 
+class Player;
+
 class Ball : public QObject, public QGraphicsEllipseItem
 {
     Q_OBJECT
@@ -29,6 +31,9 @@ private:
     qreal diameter;
     qreal moveSpeed;
     qreal angle;    
+
+    void handlePlayerCollision(Player *player);
+    void handleBlockCollision(QGraphicsItem *item);
 
 signals:
     void gameLost();

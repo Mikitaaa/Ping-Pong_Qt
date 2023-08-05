@@ -41,9 +41,12 @@ private:
 
     void InitFieldOnScene(int fieldWidth, int fieldHeight);
     void setupTimerLable();
+    void setRandomBlocks(int lvl);
 
     QTimer WinGameTimer;
     int countdownSeconds;
+
+    int level;
 };
 
 #endif // MAINWINDOW_H
