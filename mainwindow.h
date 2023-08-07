@@ -32,6 +32,8 @@ private slots:
 private:
     QGraphicsScene* scene;
     QGraphicsView *gameField;
+
+    QList<QGraphicsItem*> blockShapes;
     Player* player;
     Ball* ball;
 
@@ -42,6 +44,8 @@ private:
 
     void InitFieldOnScene(int fieldWidth, int fieldHeight);
     void setupLables();
+
+    void initItems();
     void setRandomBlocks(int lvl);
 
     QTimer WinGameTimer;
