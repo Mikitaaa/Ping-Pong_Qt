@@ -3,7 +3,7 @@
 #include <QGridLayout>
 #include <QGraphicsView>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(20) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(1) {
     setFocusPolicy(Qt::StrongFocus);
     countdownSeconds = 10;
 
@@ -57,24 +57,24 @@ MainWindow::~MainWindow() { delete scene; }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
-        case Qt::Key_Left:
-            player->movePlayer(-player->getmoveSpeed());
-            break;
+    case Qt::Key_Left:
+        player->movePlayer(-player->getmoveSpeed());
+        break;
 
-        case Qt::Key_Right:
-            player->movePlayer(player->getmoveSpeed());
-            break;
+    case Qt::Key_Right:
+        player->movePlayer(player->getmoveSpeed());
+        break;
 
-        case Qt::Key_Space:
-            if (ball && ball->scene() == scene) {
-                if (!ball->timer->isActive()) {ball->timer->start(10); }
-                if (!WinGameTimer.isActive()) {WinGameTimer.start(); }
-                player->isPlayerHoldingBall = false;
-            }
-            break;
+    case Qt::Key_Space:
+        if (ball && ball->scene() == scene) {
+            if (!ball->timer->isActive()) {ball->timer->start(10); }
+            if (!WinGameTimer.isActive()) {WinGameTimer.start(); }
+            player->isPlayerHoldingBall = false;
+        }
+        break;
 
-        default:
-            QMainWindow::keyPressEvent(event);
+    default:
+        QMainWindow::keyPressEvent(event);
     }
 }
 
@@ -130,31 +130,44 @@ void MainWindow::newGame() {
 }
 
 void MainWindow::setRandomBlocks(int lvl) {
-    int numBlocks;
+    int numBlocks, RandX, RandY;
+    qreal RandRotateAngle;
 
-    if (lvl <= 20) { numBlocks = 1 + lvl / 2; }
-    else { numBlocks = 10; }
+    if (lvl <= 5) { numBlocks = lvl; }
+    else { numBlocks = 5; }
 
-    if (level > 20 && ball->getMoveSpeed() < 10.0) { ball->setMoveSpeed(ball->getMoveSpeed() + 0.5); }
+    if (level > 5 && ball->getMoveSpeed() < 15.0) { ball->setMoveSpeed(ball->getMoveSpeed() + 0.5); }
 
     for (int i = 0; i < numBlocks; ++i) {
         int randomIndex = QRandomGenerator::global()->bounded(blockShapes.size());
         QGraphicsItem* shape = blockShapes[randomIndex];
 
         while (scene->items().contains(shape)) {
-                randomIndex = QRandomGenerator::global()->bounded(blockShapes.size());
-                shape = blockShapes[randomIndex];
-            }
+          randomIndex = QRandomGenerator::global()->bounded(blockShapes.size());
+          shape = blockShapes[randomIndex];
+        }
 
-        int x = QRandomGenerator::global()->bounded(scene->width() - shape->boundingRect().width());
-        int y = QRandomGenerator::global()->bounded(scene->height() - shape->boundingRect().height() - 100);
-        qreal angle = QRandomGenerator::global()->bounded(45.0);
+        do {
+          RandX = QRandomGenerator::global()->bounded(20, scene->width() - shape->boundingRect().width() - 20);
+          RandY = QRandomGenerator::global()->bounded(20, scene->height() - shape->boundingRect().height() - 100);
+          RandRotateAngle = QRandomGenerator::global()->bounded(45.0);
 
-        shape->setPos(x, y);
-        shape->setRotation(angle);
+          shape->setPos(RandX, RandY);
+          shape->setRotation(RandRotateAngle);
+
+          } while (checkCollisions(shape, RandX, RandY));
+
+
         scene->addItem(shape);
     }
+}
 
+bool MainWindow::checkCollisions(QGraphicsItem* shape, qreal x, qreal y) {
+    for (QGraphicsItem* item : scene->items()) {
+        if (item != shape && shape->collidesWithItem(item)) { return true; }
+    }
+
+    return false;
 }
 
 void MainWindow::initItems() {

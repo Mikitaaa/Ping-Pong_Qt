@@ -47,6 +47,8 @@ private:
 
     void initItems();
     void setRandomBlocks(int lvl);
+    bool checkCollisions(QGraphicsItem *shape, qreal x, qreal y);
+
     void newGame();
 
     QTimer WinGameTimer;
