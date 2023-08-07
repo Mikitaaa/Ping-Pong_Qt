@@ -95,8 +95,16 @@ void Ball::handlePlayerCollision(Player *player) {
 
 }
 
-void Ball::handleBlockCollision(QGraphicsItem *item) {
+void Ball::handleBlockCollision(QGraphicsItem* item) {
+    QPointF collisionVector = mapToItem(item, 0, 0) - mapToItem(this, 0, 0);
 
+    // length of the collision vector
+    qreal length = qSqrt(collisionVector.x() * collisionVector.x() + collisionVector.y() * collisionVector.y());
+
+    // Normalize vector to get a unit collision direction vector
+    if (length != 0.0) { collisionVector /= length; }
+
+    angle = qRadiansToDegrees(qAtan2(-collisionVector.y(), collisionVector.x()));
 }
 
 Ball::~Ball() {
