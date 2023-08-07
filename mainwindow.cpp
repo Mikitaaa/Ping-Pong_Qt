@@ -3,7 +3,7 @@
 #include <QGridLayout>
 #include <QGraphicsView>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(1) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(20) {
     setFocusPolicy(Qt::StrongFocus);
     countdownSeconds = 10;
 
@@ -147,7 +147,7 @@ void MainWindow::setRandomBlocks(int lvl) {
             }
 
         int x = QRandomGenerator::global()->bounded(scene->width() - shape->boundingRect().width());
-        int y = QRandomGenerator::global()->bounded(scene->height() - shape->boundingRect().height());
+        int y = QRandomGenerator::global()->bounded(scene->height() - shape->boundingRect().height() - 100);
         qreal angle = QRandomGenerator::global()->bounded(45.0);
 
         shape->setPos(x, y);
