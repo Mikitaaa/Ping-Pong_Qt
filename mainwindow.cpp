@@ -12,8 +12,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(1) {
 
     scene = new QGraphicsScene(this);
     gameField = new QGraphicsView(scene, centralWidget);
-    gameField->setDragMode(QGraphicsView::NoDrag);
-    gameField->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
 
     int fieldWidth = 700;
     int fieldHeight = 500;
@@ -150,7 +148,7 @@ void MainWindow::setRandomBlocks(int lvl) {
 
         int x = QRandomGenerator::global()->bounded(scene->width() - shape->boundingRect().width());
         int y = QRandomGenerator::global()->bounded(scene->height() - shape->boundingRect().height());
-        qreal angle = QRandomGenerator::global()->bounded(360.0);
+        qreal angle = QRandomGenerator::global()->bounded(45.0);
 
         shape->setPos(x, y);
         shape->setRotation(angle);
@@ -160,28 +158,39 @@ void MainWindow::setRandomBlocks(int lvl) {
 }
 
 void MainWindow::initItems() {
-    int circleDiameter = 20;
-    int rectangleWidth = 30;
-    int rectangleHeight = 20;
+    const int numCircles = 5;
+    const int numRectangles = 5;
+    const int numTriangles = 5;
+
+    const int minCircleDiameter = 30;
+    const int maxCircleDiameter = 50;
+    const int minRectangleWidth = 60;
+    const int maxRectangleWidth = 90;
+    const int rectangleHeight = 30;
+    const int minTriangleSide = 40;
+    const int maxTriangleSide = 60;
 
     //  5 circles
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < numCircles; ++i) {
+        int circleDiameter = QRandomGenerator::global()->bounded(minCircleDiameter, maxCircleDiameter);
         QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(0, 0, circleDiameter, circleDiameter);
         circle->setBrush(QBrush(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
         blockShapes.append(circle);
     }
 
     //  5 rectangles
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < numRectangles; ++i) {
+        int rectangleWidth = QRandomGenerator::global()->bounded(minRectangleWidth, maxRectangleWidth);
         QGraphicsRectItem* rectangle = new QGraphicsRectItem(0, 0, rectangleWidth, rectangleHeight);
         rectangle->setBrush(QBrush(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
         blockShapes.append(rectangle);
     }
 
     //  5 triangles
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < numTriangles; ++i) {
+        int sideLength = QRandomGenerator::global()->bounded(minTriangleSide, maxTriangleSide);
         QPolygonF triangle;
-        triangle << QPointF(0, 0) << QPointF(20, 0) << QPointF(10, 20);
+        triangle << QPointF(0, 0) << QPointF(sideLength, 0) << QPointF(sideLength / 2, sideLength);
         QGraphicsPolygonItem* polygon = new QGraphicsPolygonItem(triangle);
         polygon->setBrush(QBrush(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
         blockShapes.append(polygon);
