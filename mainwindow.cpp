@@ -200,7 +200,7 @@ void MainWindow::initItems() {
 
 
 void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
-    scene->setSceneRect(10, 10, fieldWidth, fieldHeight);
+    scene->setSceneRect(10, 10, fieldWidth-10, fieldHeight-10);
 
     scene->setBackgroundBrush(QColor(90, 96, 102));
 
