@@ -121,4 +121,6 @@ qreal Ball::getDiameter() const { return diameter; }
 
 void Ball::setMoveSpeed(qreal moveSpeed) {  this->moveSpeed = moveSpeed; }
 
+qreal Ball::getMoveSpeed() { return moveSpeed; }
+
 void Ball::setStartAngle() { this->angle = 135 - QRandomGenerator::global()->generateDouble() * 90; }

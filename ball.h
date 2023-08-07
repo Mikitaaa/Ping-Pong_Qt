@@ -20,6 +20,7 @@ public:
     qreal getDiameter() const;
 
     void setMoveSpeed(qreal moveSpeed);
+    qreal getMoveSpeed();
 
     void setStartAngle();
 

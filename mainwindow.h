@@ -47,6 +47,7 @@ private:
 
     void initItems();
     void setRandomBlocks(int lvl);
+    void newGame();
 
     QTimer WinGameTimer;
     int countdownSeconds;

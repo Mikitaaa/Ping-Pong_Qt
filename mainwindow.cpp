@@ -3,7 +3,7 @@
 #include <QGridLayout>
 #include <QGraphicsView>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(30) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(1) {
     setFocusPolicy(Qt::StrongFocus);
     countdownSeconds = 10;
 
@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(30) {
 
     scene = new QGraphicsScene(this);
     gameField = new QGraphicsView(scene, centralWidget);
+    gameField->setDragMode(QGraphicsView::NoDrag);
+    gameField->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
 
     int fieldWidth = 700;
     int fieldHeight = 500;
@@ -68,8 +70,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
         case Qt::Key_Space:
             if (ball && ball->scene() == scene) {
                 if (!ball->timer->isActive()) {ball->timer->start(10); }
-                player->isPlayerHoldingBall = false;
                 if (!WinGameTimer.isActive()) {WinGameTimer.start(); }
+                player->isPlayerHoldingBall = false;
             }
             break;
 
@@ -91,27 +93,23 @@ void MainWindow::updateTimerLabel() {
 void MainWindow::GameLoss() {
     // TODO game loss message
 
-    if(level > 0) { --level; }
-
-    on_NewGameButton_clicked();
+    level = 1;
+    newGame();
 }
 
 void MainWindow::GameWin() {
     // TODO game win message
 
-    // сейчас каждые 10 уровней добавляется блок
-    /*
-    при достижении 20 уровня на поле будет стоять 10 объектов,
-            в начале на каждый новый уровень на сцене будет на 1 объект больше,
-            чем было, далее до 20 уровня будет становиться на 1 объект больше каждые 2 уровня,
-            после 20 уровня количество объектов увеличиваться не будет
-            начнет увеличиваться скорость мяча
-     */
     ++level;
-    on_NewGameButton_clicked();
+    newGame();
 }
 
 void MainWindow::on_NewGameButton_clicked() {
+    level = 1;
+    newGame();
+}
+
+void MainWindow::newGame() {
     if (WinGameTimer.isActive()) { WinGameTimer.stop(); }
 
     countdownSeconds = 10;
@@ -119,26 +117,27 @@ void MainWindow::on_NewGameButton_clicked() {
     levelLabel->setText("level: " + QString::number(level));
 
     ball->timer->stop();
-
     player->setPos((gameField->width() - player->getWidth()) / 2, gameField->height() - player->getHeight() - 10);
 
     ball->setPos(player->x() + (player->getWidth() - ball->getDiameter()) / 2, player->y() - ball->getDiameter() - 5);
     player->isPlayerHoldingBall = true;
-
     ball->setStartAngle();
 
     // clear scene from items
     for (QGraphicsItem* item : scene->items()) {
-        if (item != player && item != ball) {
-            scene->removeItem(item);
-        }
+        if (item != player && item != ball) { scene->removeItem(item); }
     }
 
     setRandomBlocks(level);
 }
 
 void MainWindow::setRandomBlocks(int lvl) {
-    int numBlocks = qMin(1 + lvl / 10, 10);
+    int numBlocks;
+
+    if (lvl <= 20) { numBlocks = 1 + lvl / 2; }
+    else { numBlocks = 10; }
+
+    if (level > 20 && ball->getMoveSpeed() < 10.0) { ball->setMoveSpeed(ball->getMoveSpeed() + 0.5); }
 
     for (int i = 0; i < numBlocks; ++i) {
         int randomIndex = QRandomGenerator::global()->bounded(blockShapes.size());
