@@ -35,12 +35,13 @@ private:
     Player* player;
     Ball* ball;
 
+    QLabel* levelLabel;
     QLabel* timerLabel;
     QPushButton* newGameButton;
     QCheckBox* movementModeCheckBox;
 
     void InitFieldOnScene(int fieldWidth, int fieldHeight);
-    void setupTimerLable();
+    void setupLables();
     void setRandomBlocks(int lvl);
 
     QTimer WinGameTimer;

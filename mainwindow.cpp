@@ -17,16 +17,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(1) {
     int fieldHeight = 500;
     InitFieldOnScene(fieldWidth, fieldHeight);
 
+    levelLabel= new QLabel(QString::number(level), centralWidget);
     timerLabel = new QLabel(QString::number(countdownSeconds), centralWidget);
     newGameButton = new QPushButton("New Game", centralWidget);
     movementModeCheckBox = new QCheckBox("Looped move", centralWidget);
-    setupTimerLable();
+    setupLables();
 
     QGridLayout *mainLayout = new QGridLayout(centralWidget);
     mainLayout->addWidget(gameField, 0, 0, 4, 1);
     mainLayout->addWidget(newGameButton, 1, 1);
     mainLayout->addWidget(movementModeCheckBox, 2, 1);
     mainLayout->addWidget(timerLabel, 0, 1, 1, 1);
+    mainLayout->addWidget(levelLabel, 3, 1, 1, 1);
 
     player = new Player();
     player->setPos((fieldWidth - player->getWidth()) / 2, fieldHeight - player->getHeight() - 10);
@@ -85,19 +87,21 @@ void MainWindow::updateTimerLabel() {
 
 void MainWindow::GameLoss() {
     // TODO game loss message
+
+    if(level > 0) { --level; }
+
     on_NewGameButton_clicked();
 }
 
 void MainWindow::GameWin() {
     // TODO game win message
 
-    // функцию setRandomBlocks
-    // которая принимает количество блоков
-    // она выставляет это количество блоков в случайном порядке
+    // setRandomBlocks ставит количество блоков в случайном порядке
     // под случайным углом,блоки не могут быть расположены ниже игрока и за картой
     // можно создать массив, хранящий все возможные варианты блоков, и ставиться будут случайные из массива,
     // создать усложнение уровней за счет увеличения количества блоков, до определенного уровня, после которого
     // сложность начет меняться например за счет увеличения скорости мяча, уменьшения скорости игрока
+    ++level;
     on_NewGameButton_clicked();
 }
 
@@ -106,6 +110,7 @@ void MainWindow::on_NewGameButton_clicked() {
 
     countdownSeconds = 10;
     timerLabel->setText(QString::number(countdownSeconds));
+    levelLabel->setText(QString::number(level));
 
     ball->timer->stop();
 
@@ -120,10 +125,18 @@ void MainWindow::on_NewGameButton_clicked() {
 }
 
 void MainWindow::setRandomBlocks(int lvl) {
-    QGraphicsRectItem *newBlock = new QGraphicsRectItem();
-    newBlock->setRect(0, 0, 100, 100);
+    // TODO
+
+    // очистить все старые блоки в on_NewGameButton_clicked на сцене
+    // в этой функции поставить новые блоки в зависимости от уровня
+    QGraphicsRectItem *newBlock = new QGraphicsRectItem(0, 0, 100, 100);
     newBlock->setBrush((QBrush)Qt::black);
     scene->addItem(newBlock);
+
+    QGraphicsEllipseItem * newCircle = new QGraphicsEllipseItem(0, 0, 100, 100);
+    newCircle->setBrush((QBrush)Qt::black);
+    newCircle->setPos(scene->width() / 2 - 10, 100);
+    scene->addItem(newCircle);
 }
 
 void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
@@ -139,14 +152,20 @@ void MainWindow::InitFieldOnScene(int fieldWidth, int fieldHeight) {
     gameField->setFocusPolicy(Qt::NoFocus);
 }
 
-void MainWindow::setupTimerLable() {
+void MainWindow::setupLables() {
     timerLabel->setFixedSize(100, 50);
     QFont font("Arial", 20);
     timerLabel->setFont(font);
     timerLabel->setStyleSheet("background-color: black;");
-
     timerLabel->setAlignment(Qt::AlignCenter);
+
+
+    levelLabel->setFixedSize(100, 50);
+    levelLabel->setFont(font);
+    levelLabel->setStyleSheet("background-color: black;");
+    levelLabel->setAlignment(Qt::AlignCenter);
 }
+
 
 void MainWindow::on_movementModeCheckBox_stateChanged(int state) {
     player->setWrapAroundMovement(state == Qt::Checked);
